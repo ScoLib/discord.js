@@ -18,7 +18,7 @@ class APIRequest {
     this.retries = 0;
 
     const { userAgentSuffix } = this.client.options;
-    this.fullUserAgent = `${UserAgent}${userAgentSuffix.length ? `, ${userAgentSuffix.join(', ')}` : ''}`;
+    this.fullUserAgent = this.client.options.userAgent ?? `${UserAgent}${userAgentSuffix.length ? `, ${userAgentSuffix.join(', ')}` : ''}`;
 
     let queryString = '';
     if (options.query) {
@@ -31,7 +31,7 @@ class APIRequest {
   }
 
   make() {
-    agent ??= new https.Agent({ ...this.client.options.http.agent, keepAlive: true });
+    agent ??= this.client.options.http.agent.constructor !== Object ? this.client.options.http.agent : new https.Agent({ ...this.client.options.http.agent, keepAlive: true });
 
     const API =
       this.options.versioned === false
